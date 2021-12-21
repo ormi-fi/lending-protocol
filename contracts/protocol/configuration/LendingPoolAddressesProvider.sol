@@ -230,7 +230,6 @@ contract LendingPoolAddressesProvider is Ownable, ILendingPoolAddressesProvider 
    * @param manager The new HealthFactorLiquidationThresholdManager.
    */
   function setHealthFactorLiquidationThresholdManagerImpl(address manager) external override onlyOwner {
-    console.log('***LendingPoolAddressProvider-HEALTH_FACTOR_LIQUIDATION_THRESHOLD_MANAGER');
     _updateImpl(HEALTH_FACTOR_LIQUIDATION_THRESHOLD_MANAGER, manager);
     emit HealthFactorLiquidationThresholdManagerUpdated(manager);
   }

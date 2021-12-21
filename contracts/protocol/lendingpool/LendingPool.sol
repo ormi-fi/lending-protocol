@@ -121,7 +121,6 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
   ) external override whenNotPaused {
     DataTypes.ReserveData storage reserve = _reserves[asset];
     // Initialize |onBehalfOf|'s healthFactorLiquidationThrehold if not set yet.
-    // TODO: emit LiquidationThreshold updated event.
     if (_usersConfig[onBehalfOf].getHealthFactorLiquidationThreshold() == 0) {
       _usersConfig[onBehalfOf].setHealthFactorLiquidationThreshold(1 ether);
     }
@@ -692,6 +691,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     uint256 newHealthFactorLiquidationThreshold
   ) external override onlyHealthFactorLiquidationThresholdManager {
     _usersConfig[user].setHealthFactorLiquidationThreshold(newHealthFactorLiquidationThreshold);
+    emit HealthFactorLiquidationThresholdUpdated(user, newHealthFactorLiquidationThreshold);
   }
 
   /**

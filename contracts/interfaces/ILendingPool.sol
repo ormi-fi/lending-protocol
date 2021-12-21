@@ -166,7 +166,17 @@ interface ILendingPool {
     uint256 liquidityIndex,
     uint256 variableBorrowIndex
   );
-
+  
+  /**
+   * @dev Emitted when the health factor liquidation threshold of a user is updated.
+   * @param user the user's account address to be updated.
+   * @param healthFactorLiquidationThreshold the new liquidation threshold to be updated.
+   */
+  event HealthFactorLiquidationThresholdUpdated(
+    address indexed user,
+    uint256 healthFactorLiquidationThreshold
+  );
+  
   /**
    * @dev Deposits an `amount` of underlying asset into the reserve, receiving in return overlying aTokens.
    * - E.g. User deposits 100 USDC and gets in return 100 aUSDC

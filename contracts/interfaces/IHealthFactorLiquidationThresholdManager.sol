@@ -10,17 +10,18 @@ pragma solidity 0.6.12;
  **/
 interface IHealthFactorLiquidationThresholdManager {
   /**
-   * @dev Emitted when the health factor liquidation threshold of a user is updated.
-   * @param user the user's account address to be updated.
-   * @param healthFactorLiquidationThreshold the new liquidation threshold to be updated.
-   */
-  event HealthFactorLiquidationThresholdUpdated(
-    address indexed user,
-    uint256 healthFactorLiquidationThreshold
-  );
-
+   * @dev Returns the health factor liquidation threshold for a particular account.
+   * @param user the account of the health factor liquidation threshold we are querying.
+   * @return The health factor liquidation threshold.
+   **/
   function getHealthFactorLiquidationThreshold(address user) external view returns (uint256);
 
+  /**
+   * @dev Updatess the health factor liquidation threshold for a particular account.
+   * @param user the account of the health factor liquidation threshold we are querying.
+   * @param newHealthFactorLiquidationThreshold the new health factor liquidation threshold value
+   * we are updating.
+   **/
   function setHealthFactorLiquidationThreshold(
     address user,
     uint256 newHealthFactorLiquidationThreshold
