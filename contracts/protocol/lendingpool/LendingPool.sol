@@ -222,6 +222,10 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     address onBehalfOf
   ) external override whenNotPaused {
     DataTypes.ReserveData storage reserve = _reserves[asset];
+    // Initialize |onBehalfOf|'s healthFactorLiquidationThrehold if not set yet.
+    if (_usersConfig[onBehalfOf].getHealthFactorLiquidationThreshold() == 0) {
+      _usersConfig[onBehalfOf].setHealthFactorLiquidationThreshold(1 ether);
+    }
 
     _executeBorrow(
       ExecuteBorrowParams(

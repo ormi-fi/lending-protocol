@@ -167,7 +167,9 @@ library ValidationLogic {
 
     require(vars.userCollateralBalanceETH > 0, Errors.VL_COLLATERAL_BALANCE_IS_0);
    // Requires that health factor liquidation threshold is initialized.
-    require(userConfig.getHealthFactorLiquidationThreshold() != 0);
+
+    require(userConfig.getHealthFactorLiquidationThreshold() != 0, Errors.VL_HEALTH_FACTOR_LIQUIDATION_THRESHOLD_IS_NOT_SET);
+
     require(
       vars.healthFactor > userConfig.getHealthFactorLiquidationThreshold(),
       Errors.VL_HEALTH_FACTOR_LOWER_THAN_LIQUIDATION_THRESHOLD
