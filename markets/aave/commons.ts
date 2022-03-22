@@ -115,6 +115,7 @@ export const CommonsConfig: ICommonConfiguration = {
     [eEthereumNetwork.main]: undefined,
     [eEthereumNetwork.tenderly]: undefined,
   },
+  // Index of which existing account will be set as the pool admin.
   PoolAdminIndex: 0,
   EmergencyAdmin: {
     [eEthereumNetwork.hardhat]: undefined,
@@ -125,6 +126,7 @@ export const CommonsConfig: ICommonConfiguration = {
     [eEthereumNetwork.main]: undefined,
     [eEthereumNetwork.tenderly]: undefined,
   },
+  // Index of which existing account will be set as the emergency admin.
   EmergencyAdminIndex: 1,
   ProviderRegistry: {
     [eEthereumNetwork.kovan]: '',
@@ -136,7 +138,7 @@ export const CommonsConfig: ICommonConfiguration = {
     [eEthereumNetwork.tenderly]: '0x52D306e36E3B6B02c153d0266ff0f85d18BCD413',
   },
   ProviderRegistryOwner: {
-    [eEthereumNetwork.kovan]: '0xf03e58d404e74e5a8480f033e13adc4aeaa89873',
+    [eEthereumNetwork.kovan]: '', //'0xf03e58d404e74e5a8480f033e13adc4aeaa89873'
     [eEthereumNetwork.ropsten]: '',
     [eEthereumNetwork.main]: '0xB9062896ec3A615a4e4444DF183F0531a77218AE',
     [eEthereumNetwork.coverage]: '',
