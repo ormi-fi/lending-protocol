@@ -93,6 +93,9 @@ docker-compose exec contracts-env bash
 # A new Bash terminal is prompted, connected to the container.
 # You can run these commands for deployment with different arguments.
 
+# Deployment (dev) deployment with no contract verification:
+npm run aave:kovan:dev:migration
+
 # Deployment with registry deployment and contract verification:
 npm run aave:kovan:full:migration:add-registry:verify
 
@@ -101,9 +104,6 @@ npm run aave:kovan:full:migration:add-registry
 
 # Deployment with no registry deployment and no contract verification:
 npm run aave:kovan:full:migration
-
-# Deployment (dev) with no registry deployment:
-npm run aave:kovan:dev:migration
 ```
 Note that for the above *full* deployment, both the first and second accounts will need to be funded. For detail, see:
 `markets/aave/commons.ts`, where `EmergencyAdminIndex, PoolAdminIndex` represent the account indices for contract
