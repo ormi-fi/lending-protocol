@@ -1,6 +1,8 @@
 # Deployed contract addresses
 This document contains the addresses of all deployed Ormi contracts:
-For deployment scripts, see `package.json` and `README.md`
+For deployment scripts, see `package.json` and `README.md`.
+
+Note: the number of contracts deployed do not necessarily result from the last run only. For more details see `README.md`.
 
 # Kovan full deployment
 ```
