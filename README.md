@@ -194,3 +194,5 @@ await DAI.connect(signer).approve(lendingPool.address, ethers.utils.parseUnits('
 // Deposit 100 DAI
 await lendingPool.connect(signer).deposit(DAI.address, ethers.utils.parseUnits('100'), await signer.getAddress(), '0');
 ```
+## Creating an npm package
+In order to create an npm package similar to you need to run `npm publish --access public` in the docker-compose session, note that you need to be logged in via `npm login`
