@@ -24,7 +24,8 @@ interface ILendingPoolCollateralManager {
     uint256 debtToCover,
     uint256 liquidatedCollateralAmount,
     address liquidator,
-    bool receiveAToken
+    bool receiveAToken,
+    uint256 coveragePoolLiability
   );
 
   /**
