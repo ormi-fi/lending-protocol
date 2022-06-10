@@ -36,15 +36,9 @@ contract LendingPoolCollateralManager is
   using WadRayMath for uint256;
   using PercentageMath for uint256;
 
-  //ideally should update address provider to be able to return the address
-  address coveragePoolAddress;
-  uint256 wad = uint256(1e18);
-
   uint256 internal constant LIQUIDATION_CLOSE_FACTOR_PERCENT = 5000;
 
   struct LiquidationCallLocalVars {
-    uint256 userEthCollateral;
-    uint256 userEthDebt;
     uint256 userCollateralBalance;
     uint256 userStableDebt;
     uint256 userVariableDebt;
@@ -55,16 +49,7 @@ contract LendingPoolCollateralManager is
     uint256 userStableRate;
     uint256 maxCollateralToLiquidate;
     uint256 debtAmountNeeded;
-    uint256 coveragePoolLiability;
     uint256 healthFactor;
-    uint256 userHealthFactor;
-    uint256 ltv;
-    uint256 ccr;
-    uint256 collateralAllowed;
-    uint256 debtAssetPrice;
-    uint256 debtDecimals;
-    uint256 diff;
-    uint256 currentAvailableCollateral;
     uint256 liquidatorPreviousATokenBalance;
     IAToken collateralAtoken;
     bool isCollateralEnabled;
@@ -103,10 +88,10 @@ contract LendingPoolCollateralManager is
     DataTypes.ReserveData storage collateralReserve = _reserves[collateralAsset];
     DataTypes.ReserveData storage debtReserve = _reserves[debtAsset];
     DataTypes.UserConfigurationMap storage userConfig = _usersConfig[user];
-    LiquidationCallLocalVars memory vars;
-    vars.coveragePoolLiability = 0;
 
-    (vars.userEthCollateral, vars.userEthDebt, vars.ltv, , vars.healthFactor) = GenericLogic.calculateUserAccountData(
+    LiquidationCallLocalVars memory vars;
+
+    (, , , , vars.healthFactor) = GenericLogic.calculateUserAccountData(
       user,
       _reserves,
       userConfig,
@@ -144,9 +129,7 @@ contract LendingPoolCollateralManager is
 
     (
       vars.maxCollateralToLiquidate,
-      vars.debtAmountNeeded,
-      vars.debtAssetPrice,
-      vars.debtDecimals
+      vars.debtAmountNeeded
     ) = _calculateAvailableCollateralToLiquidate(
       collateralReserve,
       debtReserve,
@@ -157,50 +140,19 @@ contract LendingPoolCollateralManager is
     );
 
     // If debtAmountNeeded < actualDebtToLiquidate, there isn't enough
-    // collateral to cover the actual amount that is being liquidated, hence we need to either
-    // liquidatea a smaller amount or the CP needs to pay part of the remainder
-    if(vars.debtAmountNeeded < vars.actualDebtToLiquidate) {
+    // collateral to cover the actual amount that is being liquidated, hence we liquidate
+    // a smaller amount
 
-      ////****logic to account for how much the coverage pool is responsible for covering
-      vars.userHealthFactor = userConfig.getHealthFactorLiquidationThreshold();
-
-      if(vars.userHealthFactor < wad) {
-        //Means they could have underCollat loan. Need to figure how much to determin CP liability
-
-        vars.coveragePoolLiability = vars.actualDebtToLiquidate.sub(vars.debtAmountNeeded); //If undercollaterlized CP will pay the difference in debt
-
-        // Calculate the normal collateral Coverage ratio based of user LTV // ((1 - LTV) / LTV) +1
-        vars.ccr = (wad.sub(vars.ltv)).mul(wad).div(vars.ltv).add(wad);
-        vars.collateralAllowed = vars.userEthDebt.mul(vars.ccr).div(wad);
-        vars.collateralAllowed = vars.collateralAllowed.mul(vars.userHealthFactor).div(wad);
-
-        vars.diff = vars.collateralAllowed.sub(vars.userEthCollateral);
-        //--need to adjust diff for price of debt // debtAmount * price / 10 ** (18 + (18 - debt decimals))
-        vars.diff = vars.diff.mul(vars.debtAssetPrice).div(10 ** (18 + (18 - vars.debtDecimals)));
-
-        vars.coveragePoolLiability = vars.diff > vars.coveragePoolLiability ? vars.coveragePoolLiability : vars.diff;
-        //--Need to determine if this how much we want to pay back since the users allowed health factor should increase
-
-        //Just in case the CP doesnt have enough we want to cover whatever we can
-        vars.currentAvailableCollateral = IERC20(debtAsset).balanceOf(coveragePoolAddress);
-        if(vars.currentAvailableCollateral < vars.coveragePoolLiability) {
-          vars.coveragePoolLiability = vars.currentAvailableCollateral;
-          vars.actualDebtToLiquidate = vars.debtAmountNeeded.add(vars.currentAvailableCollateral);
-        }
-
-      } else {
-        //User isnt auth for underCollat, we need to just liquidate less
-        vars.actualDebtToLiquidate = vars.debtAmountNeeded;
-      }
+    if (vars.debtAmountNeeded < vars.actualDebtToLiquidate) {
+      vars.actualDebtToLiquidate = vars.debtAmountNeeded;
     }
-
 
     // If the liquidator reclaims the underlying asset, we make sure there is enough available liquidity in the
     // collateral reserve
     if (!receiveAToken) {
-      vars.currentAvailableCollateral =  //Reusing variable to avoid stack to deep errors
+      uint256 currentAvailableCollateral =
         IERC20(collateralAsset).balanceOf(address(vars.collateralAtoken));
-      if (vars.currentAvailableCollateral < vars.maxCollateralToLiquidate) {
+      if (currentAvailableCollateral < vars.maxCollateralToLiquidate) {
         return (
           uint256(Errors.CollateralManagerErrors.NOT_ENOUGH_LIQUIDITY),
           Errors.LPCM_NOT_ENOUGH_LIQUIDITY_TO_LIQUIDATE
@@ -245,9 +197,6 @@ contract LendingPoolCollateralManager is
       if (vars.liquidatorPreviousATokenBalance == 0) {
         DataTypes.UserConfigurationMap storage liquidatorConfig = _usersConfig[msg.sender];
         liquidatorConfig.setUsingAsCollateral(collateralReserve.id, true);
-        if (liquidatorConfig.getHealthFactorLiquidationThreshold() == 0) {
-          liquidatorConfig.setHealthFactorLiquidationThreshold(1 ether);
-        }
         emit ReserveUsedAsCollateralEnabled(collateralAsset, msg.sender);
       }
     } else {
@@ -279,17 +228,8 @@ contract LendingPoolCollateralManager is
     IERC20(debtAsset).safeTransferFrom(
       msg.sender,
       debtReserve.aTokenAddress,
-      vars.debtAmountNeeded
+      vars.actualDebtToLiquidate
     );
-
-    //Transfer the amount CP is resposible for to Atoken address if applicable
-    if(vars.coveragePoolLiability > 0) {
-      IERC20(debtAsset).safeTransferFrom(
-        coveragePoolAddress,
-        debtReserve.aTokenAddress,
-        vars.coveragePoolLiability
-      );
-    }
 
     emit LiquidationCall(
       collateralAsset,
@@ -298,8 +238,7 @@ contract LendingPoolCollateralManager is
       vars.actualDebtToLiquidate,
       vars.maxCollateralToLiquidate,
       msg.sender,
-      receiveAToken,
-      vars.coveragePoolLiability
+      receiveAToken
     );
 
     return (uint256(Errors.CollateralManagerErrors.NO_ERROR), Errors.LPCM_NO_ERRORS);
@@ -337,15 +276,15 @@ contract LendingPoolCollateralManager is
     address debtAsset,
     uint256 debtToCover,
     uint256 userCollateralBalance
-  ) internal view returns (uint256, uint256, uint256, uint256) {
+  ) internal view returns (uint256, uint256) {
     uint256 collateralAmount = 0;
     uint256 debtAmountNeeded = 0;
-    //IPriceOracleGetter oracle = IPriceOracleGetter(_addressesProvider.getPriceOracle());
+    IPriceOracleGetter oracle = IPriceOracleGetter(_addressesProvider.getPriceOracle());
 
     AvailableCollateralToLiquidateLocalVars memory vars;
 
-    vars.collateralPrice = IPriceOracleGetter(_addressesProvider.getPriceOracle()).getAssetPrice(collateralAsset);
-    vars.debtAssetPrice = IPriceOracleGetter(_addressesProvider.getPriceOracle()).getAssetPrice(debtAsset);
+    vars.collateralPrice = oracle.getAssetPrice(collateralAsset);
+    vars.debtAssetPrice = oracle.getAssetPrice(debtAsset);
 
     (, , vars.liquidationBonus, vars.collateralDecimals, ) = collateralReserve
       .configuration
@@ -369,11 +308,10 @@ contract LendingPoolCollateralManager is
         .mul(10**vars.debtAssetDecimals)
         .div(vars.debtAssetPrice.mul(10**vars.collateralDecimals))
         .percentDiv(vars.liquidationBonus);
-
     } else {
       collateralAmount = vars.maxAmountCollateralToLiquidate;
       debtAmountNeeded = debtToCover;
     }
-    return (collateralAmount, debtAmountNeeded, vars.debtAssetPrice, vars.debtAssetDecimals);
+    return (collateralAmount, debtAmountNeeded);
   }
 }
