@@ -110,6 +110,23 @@ Note that for the above *full* deployment, both the first and second accounts wi
 `markets/aave/commons.ts`, where `EmergencyAdminIndex, PoolAdminIndex` represent the account indices for contract
 calls needed for deployment scripts.
 
+## Running a local node in fork mode
+
+To test locally without expending real or testnet Eth, you can run a node using the Hardhat built-in fork feature.
+
+You must have an archive node api key (infura or alchemy) 
+
+````
+# In one terminal
+docker-compose up
+
+# Open another tab or terminal
+docker-compose exec contracts-env bash
+
+# Run hardhat node with mainnet fork mode
+npm run hardhat:main:node
+````
+
 ### Mainnet fork deployment
 
 You can deploy Ormi in a forked Mainnet chain using Hardhat built-in fork feature:
