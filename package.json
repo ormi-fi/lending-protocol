@@ -13,6 +13,7 @@
     "hardhat:tenderly-main": "hardhat --network tenderlyMain",
     "hardhat:ropsten": "hardhat --network ropsten",
     "hardhat:main": "hardhat --network main",
+    "hardhat:main:node": "FORK=main hardhat node",
     "hardhat:docker": "hardhat --network hardhatevm_docker",
     "hardhat:mumbai": "hardhat --network mumbai",
     "hardhat:matic": "hardhat --network matic",
