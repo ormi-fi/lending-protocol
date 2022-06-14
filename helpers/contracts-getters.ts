@@ -11,6 +11,7 @@ import {
   LendingPoolConfiguratorFactory,
   LendingPoolFactory,
   HealthFactorLiquidationThresholdManagerFactory,
+  CoveragePoolFactory,
   LendingRateOracleFactory,
   MintableERC20Factory,
   MockATokenFactory,
@@ -345,6 +346,15 @@ export const getLendingPoolImpl = async (address?: tEthereumAddress) =>
     address ||
       (
         await getDb().get(`${eContractid.LendingPoolImpl}.${DRE.network.name}`).value()
+      ).address,
+    await getFirstSigner()
+  );
+
+export const getCoveragePoolImpl = async (address?: tEthereumAddress) =>
+  await CoveragePoolFactory.connect(
+    address ||
+      (
+        await getDb().get(`${eContractid.CoveragePoolImpl}.${DRE.network.name}`).value()
       ).address,
     await getFirstSigner()
   );

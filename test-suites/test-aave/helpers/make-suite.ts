@@ -3,6 +3,7 @@ import { Signer } from 'ethers';
 import {
   getLendingPool,
   getHealthFactorLiquidationThresholdManager,
+  getCoveragePool,
   getLendingPoolAddressesProvider,
   getAaveProtocolDataProvider,
   getAToken,
@@ -19,6 +20,7 @@ import {
 } from '../../../helpers/contracts-getters';
 import { eEthereumNetwork, eNetwork, tEthereumAddress } from '../../../helpers/types';
 import { LendingPool } from '../../../types/LendingPool';
+import { CoveragePool } from '../../../types/CoveragePool';
 import { AaveProtocolDataProvider } from '../../../types/AaveProtocolDataProvider';
 import { MintableERC20 } from '../../../types/MintableERC20';
 import { AToken } from '../../../types/AToken';
@@ -58,6 +60,7 @@ export interface TestEnv {
   users: SignerWithAddress[];
   pool: LendingPool;
   liquidationThresholdManager: HealthFactorLiquidationThresholdManager;
+  coveragePool: CoveragePool;
   configurator: LendingPoolConfigurator;
   oracle: PriceOracle;
   helpersContract: AaveProtocolDataProvider;
@@ -85,6 +88,7 @@ const testEnv: TestEnv = {
   deployer: {} as SignerWithAddress,
   users: [] as SignerWithAddress[],
   pool: {} as LendingPool,
+  coveragePool: {} as CoveragePool,
   configurator: {} as LendingPoolConfigurator,
   helpersContract: {} as AaveProtocolDataProvider,
   oracle: {} as PriceOracle,
@@ -119,6 +123,7 @@ export async function initializeMakeSuite() {
   testEnv.deployer = deployer;
   testEnv.pool = await getLendingPool();
   testEnv.liquidationThresholdManager = await getHealthFactorLiquidationThresholdManager();
+  testEnv.coveragePool = await getCoveragePool();
 
   testEnv.configurator = await getLendingPoolConfiguratorProxy();
 

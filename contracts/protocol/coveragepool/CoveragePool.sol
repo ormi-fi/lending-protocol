@@ -33,6 +33,15 @@ contract CoveragePool is VersionedInitializable, ICoveragePool {
   }
 
   /**
+   * @notice To be called to initialize a new bonding contract
+   * @param _bonder The address of the bonding contract
+   * @param _principleToken The token that will be bonded to recieve Ormi Tokensg
+   */
+  function initializeBond(address _bonder, address _principleToken) external onlyPoolAdmin {
+    // TODO: stubbed function
+  }
+
+  /**
    *  @notice deposit principle token and recieve back payout token
    *  @param _principleTokenAddress address
    *  @param _amountPrincipleToken uint256

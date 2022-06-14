@@ -219,11 +219,7 @@ export const deployHealthFactorLiquidationThresholdManager = async (verify?: boo
 };
 
 export const deployCoveragePool = async (verify?: boolean) => {
-  const libraries = await deployAaveLibraries(verify);
-  const coveragePoolImpl = await new CoveragePoolFactory(
-    libraries,
-    await getFirstSigner()
-  ).deploy();
+  const coveragePoolImpl = await new CoveragePoolFactory(await getFirstSigner()).deploy();
   await insertContractAddressInDb(eContractid.CoveragePoolImpl, coveragePoolImpl.address);
   return withSaveAndVerify(coveragePoolImpl, eContractid.CoveragePool, [], verify);
 };

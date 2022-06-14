@@ -13,6 +13,7 @@ import {
   deployLendingPoolConfigurator,
   deployLendingPool,
   deployHealthFactorLiquidationThresholdManager,
+  deployCoveragePool,
   deployPriceOracle,
   deployLendingPoolCollateralManager,
   deployMockFlashLoanReceiver,
@@ -58,6 +59,7 @@ import {
   getHealthFactorLiquidationThresholdManager,
   getLendingPool,
   getLendingPoolConfiguratorProxy,
+  getCoveragePool,
   getPairsTokenAggregator,
 } from '../../helpers/contracts-getters';
 import { WETH9Mocked } from '../../types/WETH9Mocked';
@@ -161,6 +163,16 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
     eContractid.HealthFactorLiquidationThresholdManager,
     healthFactorLiquidationThresholdManagerProxy.address
   );
+
+  // Ormi implementation of CoveragePool
+  const coveragePoolImpl = await deployCoveragePool();
+
+  await waitForTx(await addressesProvider.setCoveragePoolImpl(coveragePoolImpl.address));
+
+  const coveragePoolAddress = await addressesProvider.getCoveragePool();
+  const coveragePoolProxy = await getCoveragePool(coveragePoolAddress);
+
+  await insertContractAddressInDb(eContractid.CoveragePool, coveragePoolProxy.address);
 
   // Deploy deployment helpers
   await deployStableAndVariableTokensHelper([lendingPoolProxy.address, addressesProvider.address]);

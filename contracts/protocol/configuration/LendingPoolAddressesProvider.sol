@@ -246,7 +246,7 @@ contract LendingPoolAddressesProvider is Ownable, ILendingPoolAddressesProvider 
    * @return The CoveragePool proxy address
    **/
   function getCoveragePool() external view override returns (address) {
-    return getAddress(LENDING_POOL);
+    return getAddress(COVERAGE_POOL);
   }
 
   /**
