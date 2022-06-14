@@ -20,6 +20,7 @@ import {
   ATokenFactory,
   ATokensAndRatesHelperFactory,
   AaveOracleFactory,
+  CoveragePoolFactory,
   DefaultReserveInterestRateStrategyFactory,
   DelegationAwareATokenFactory,
   InitializableAdminUpgradeabilityProxyFactory,
@@ -201,9 +202,7 @@ export const deployLendingPool = async (verify?: boolean) => {
   return withSaveAndVerify(lendingPoolImpl, eContractid.LendingPool, [], verify);
 };
 
-export const deployHealthFactorLiquidationThresholdManager = async (
-  verify?: boolean
-) => {
+export const deployHealthFactorLiquidationThresholdManager = async (verify?: boolean) => {
   var addr = await getFirstSigner();
   const healthFactorLiquidationThresholdManagerImpl =
     await new HealthFactorLiquidationThresholdManagerFactory(await getFirstSigner()).deploy();
@@ -217,6 +216,16 @@ export const deployHealthFactorLiquidationThresholdManager = async (
     [],
     verify
   );
+};
+
+export const deployCoveragePool = async (verify?: boolean) => {
+  const libraries = await deployAaveLibraries(verify);
+  const coveragePoolImpl = await new CoveragePoolFactory(
+    libraries,
+    await getFirstSigner()
+  ).deploy();
+  await insertContractAddressInDb(eContractid.CoveragePoolImpl, coveragePoolImpl.address);
+  return withSaveAndVerify(coveragePoolImpl, eContractid.CoveragePool, [], verify);
 };
 
 export const deployPriceOracle = async (verify?: boolean) =>

@@ -20,6 +20,7 @@ interface ILendingPoolAddressesProvider {
   event ProxyCreated(bytes32 id, address indexed newAddress);
   event AddressSet(bytes32 id, address indexed newAddress, bool hasProxy);
   event HealthFactorLiquidationThresholdManagerUpdated(address indexed newAddress);
+  event CoveragePoolUpdated(address indexed newAddress);
 
   function getMarketId() external view returns (string memory);
 
@@ -62,4 +63,8 @@ interface ILendingPoolAddressesProvider {
   function getHealthFactorLiquidationThresholdManager() external view returns (address);
 
   function setHealthFactorLiquidationThresholdManagerImpl(address manager) external;
+
+  function getCoveragePool() external view returns (address);
+
+  function setCoveragePoolImpl(address pool) external;
 }
