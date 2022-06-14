@@ -16,7 +16,7 @@ task('dev:deploy-coverage-pool', 'Deploy coverage pool for dev enviroment')
 
     const coveragePoolImpl = await deployCoveragePool(verify);
 
-    // Set lending pool impl to Address Provider
+    // Set coverage pool impl to Address Provider
     await waitForTx(await addressesProvider.setCoveragePoolImpl(coveragePoolImpl.address));
 
     const address = await addressesProvider.getCoveragePool();
