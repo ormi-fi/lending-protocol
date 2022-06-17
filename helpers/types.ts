@@ -14,6 +14,7 @@ export enum eEthereumNetwork {
   coverage = 'coverage',
   hardhat = 'hardhat',
   tenderly = 'tenderly',
+  goerli = 'goerli',
 }
 
 export enum ePolygonNetwork {
@@ -39,6 +40,7 @@ export enum EthereumNetworkNames {
   xdai = 'xdai',
   avalanche = 'avalanche',
   fuji = 'fuji',
+  goerli = 'goerli',
 }
 
 export enum AavePools {
@@ -430,6 +432,7 @@ export interface iEthereumParamsPerNetwork<T> {
   [eEthereumNetwork.main]: T;
   [eEthereumNetwork.hardhat]: T;
   [eEthereumNetwork.tenderly]: T;
+  [eEthereumNetwork.goerli]: T;
 }
 
 export interface iPolygonParamsPerNetwork<T> {

@@ -47,6 +47,9 @@ export const NETWORKS_RPC_URL: iParamsPerNetwork<string> = {
   [eEthereumNetwork.hardhat]: 'http://localhost:8545',
   [eEthereumNetwork.buidlerevm]: 'http://localhost:8545',
   [eEthereumNetwork.tenderly]: `https://rpc.tenderly.co/fork/`,
+  [eEthereumNetwork.goerli]: ALCHEMY_KEY
+    ? `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_KEY}`
+    : `https://goerli.infura.io/v3/${INFURA_KEY}`,
   [ePolygonNetwork.mumbai]: 'https://rpc-mumbai.maticvigil.com',
   [ePolygonNetwork.matic]:
     // 'https://rpc-mainnet.maticvigil.com/v1/e616b9ddc7598ffae92629f8145614d55094c722',
@@ -67,6 +70,8 @@ export const NETWORKS_DEFAULT_GAS: iParamsPerNetwork<number> = {
   [eEthereumNetwork.hardhat]: 65 * GWEI,
   [eEthereumNetwork.buidlerevm]: 65 * GWEI,
   [eEthereumNetwork.tenderly]: 1 * GWEI,
+  //Idk what price to set for Goerli so marking this line
+  [eEthereumNetwork.goerli]: 2 * GWEI,
   [ePolygonNetwork.mumbai]: 1 * GWEI,
   [ePolygonNetwork.matic]: 1 * GWEI,
   [eXDaiNetwork.xdai]: 1 * GWEI,
@@ -82,6 +87,7 @@ export const BLOCK_TO_FORK: iParamsPerNetwork<number | undefined> = {
   [eEthereumNetwork.hardhat]: undefined,
   [eEthereumNetwork.buidlerevm]: undefined,
   [eEthereumNetwork.tenderly]: undefined,
+  [eEthereumNetwork.goerli]: undefined,
   [ePolygonNetwork.mumbai]: undefined,
   [ePolygonNetwork.matic]: undefined,
   [eXDaiNetwork.xdai]: undefined,

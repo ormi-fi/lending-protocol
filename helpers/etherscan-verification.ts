@@ -14,7 +14,7 @@ const okErrors = [`Contract source code already verified`];
 
 const unableVerifyError = 'Fail - Unable to verify';
 
-export const SUPPORTED_ETHERSCAN_NETWORKS = ['main', 'ropsten', 'kovan'];
+export const SUPPORTED_ETHERSCAN_NETWORKS = ['main', 'ropsten', 'kovan', 'goerli'];
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -84,25 +84,26 @@ export const runTaskWithRetry = async (
         '[ETHERSCAN][ERROR] Errors after all the retries, check the logs for more information.'
       );
     }
-  } catch (error) {
+  } catch (error: unknown) {
+    const err = error as Error;
     counter--;
 
-    if (okErrors.some((okReason) => error.message.includes(okReason))) {
-      console.info('[ETHERSCAN][INFO] Skipping due OK response: ', error.message);
+    if (okErrors.some((okReason) => err.message.includes(okReason))) {
+      console.info('[ETHERSCAN][INFO] Skipping due OK response: ', err.message);
       return;
     }
 
-    if (fatalErrors.some((fatalError) => error.message.includes(fatalError))) {
+    if (fatalErrors.some((fatalError) => err.message.includes(fatalError))) {
       console.error(
         '[ETHERSCAN][ERROR] Fatal error detected, skip retries and resume deployment.',
-        error.message
+        err.message
       );
       return;
     }
-    console.error('[ETHERSCAN][ERROR]', error.message);
+    console.error('[ETHERSCAN][ERROR]', err.message);
     console.log();
     console.info(`[ETHERSCAN][[INFO] Retrying attemps: ${counter}.`);
-    if (error.message.includes(unableVerifyError)) {
+    if (err.message.includes(unableVerifyError)) {
       console.log('[ETHERSCAN][WARNING] Trying to verify via uploading all sources.');
       delete params.relatedSources;
     }

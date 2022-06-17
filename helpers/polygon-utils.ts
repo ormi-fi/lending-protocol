@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { constants } from 'buffer';
 import { Contract } from 'ethers/lib/ethers';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DRE } from './misc-utils';
@@ -120,14 +121,16 @@ export const verifyAtPolygon = async (
     }
 
     throw Error(JSON.stringify(response.data, null, 2));
-  } catch (error) {
-    if (error?.message.includes('Smart-contract already verified.')) {
+  } catch (error: unknown) {
+    const err = error as Error;
+
+    if (err?.message.includes('Smart-contract already verified.')) {
       console.log(
         `[Polygon Verify] Already verified. Check it at: https://explorer-${net}.maticvigil.com/address/${instance.address}/contracts) \n`
       );
       return;
     }
-    console.error('[Polygon Verify] Error:', error.toString());
+    console.error('[Polygon Verify] Error:', err.toString());
     console.log(
       `[Polygon Verify] Skipping verification for ${id} with ${instance.address} due an unknown error.`
     );
