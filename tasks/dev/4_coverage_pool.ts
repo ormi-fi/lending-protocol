@@ -8,11 +8,9 @@ import { ConfigNames, loadPoolConfig } from '../../helpers/configuration';
 
 task('dev:deploy-coverage-pool', 'Deploy coverage pool for dev enviroment')
   .addFlag('verify', 'Verify contracts at Etherscan')
-  .addParam('pool', `Pool name to retrieve configuration, supported: ${Object.values(ConfigNames)}`)
-  .setAction(async ({ verify, pool }, localBRE) => {
+  .setAction(async ({ verify }, localBRE) => {
     await localBRE.run('set-DRE');
     const addressesProvider = await getLendingPoolAddressesProvider();
-    const poolConfig = loadPoolConfig(pool);
 
     const coveragePoolImpl = await deployCoveragePool(verify);
 
