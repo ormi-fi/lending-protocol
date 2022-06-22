@@ -145,7 +145,7 @@ export const linkBytecode = (artifact: BuidlerArtifact | Artifact, libraries: an
 };
 
 export const getParamPerNetwork = <T>(param: iParamsPerNetwork<T>, network: eNetwork) => {
-  const { main, ropsten, kovan, coverage, buidlerevm, tenderly } =
+  const { main, coverage, buidlerevm, tenderly, goerli } =
     param as iEthereumParamsPerNetwork<T>;
   const { matic, mumbai } = param as iPolygonParamsPerNetwork<T>;
   const { xdai } = param as iXDaiParamsPerNetwork<T>;
@@ -161,14 +161,12 @@ export const getParamPerNetwork = <T>(param: iParamsPerNetwork<T>, network: eNet
       return buidlerevm;
     case eEthereumNetwork.hardhat:
       return buidlerevm;
-    case eEthereumNetwork.kovan:
-      return kovan;
-    case eEthereumNetwork.ropsten:
-      return ropsten;
     case eEthereumNetwork.main:
       return main;
     case eEthereumNetwork.tenderly:
       return tenderly;
+    case eEthereumNetwork.goerli:
+      return goerli;
     case ePolygonNetwork.matic:
       return matic;
     case ePolygonNetwork.mumbai:
@@ -399,7 +397,7 @@ export const getContractAddressWithJsonFallback = async (
 
   const contractAtMarketConfig = getOptionalParamAddressPerNetwork(poolConfig[id], network);
   if (notFalsyOrZeroAddress(contractAtMarketConfig)) {
-    return contractAtMarketConfig;
+    return contractAtMarketConfig as string;
   }
 
   const contractAtDb = await getDb().get(`${id}.${DRE.network.name}`).value();

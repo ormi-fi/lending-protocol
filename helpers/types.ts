@@ -8,12 +8,11 @@ export type eNetwork = eEthereumNetwork | ePolygonNetwork | eXDaiNetwork | eAval
 
 export enum eEthereumNetwork {
   buidlerevm = 'buidlerevm',
-  kovan = 'kovan',
-  ropsten = 'ropsten',
   main = 'main',
   coverage = 'coverage',
   hardhat = 'hardhat',
   tenderly = 'tenderly',
+  goerli = 'goerli',
 }
 
 export enum ePolygonNetwork {
@@ -31,14 +30,13 @@ export enum eAvalancheNetwork {
 }
 
 export enum EthereumNetworkNames {
-  kovan = 'kovan',
-  ropsten = 'ropsten',
   main = 'main',
   matic = 'matic',
   mumbai = 'mumbai',
   xdai = 'xdai',
   avalanche = 'avalanche',
   fuji = 'fuji',
+  goerli = 'goerli',
 }
 
 export enum AavePools {
@@ -425,11 +423,10 @@ export interface iParamsPerNetworkAll<T>
 export interface iEthereumParamsPerNetwork<T> {
   [eEthereumNetwork.coverage]: T;
   [eEthereumNetwork.buidlerevm]: T;
-  [eEthereumNetwork.kovan]: T;
-  [eEthereumNetwork.ropsten]: T;
   [eEthereumNetwork.main]: T;
   [eEthereumNetwork.hardhat]: T;
   [eEthereumNetwork.tenderly]: T;
+  [eEthereumNetwork.goerli]: T;
 }
 
 export interface iPolygonParamsPerNetwork<T> {
