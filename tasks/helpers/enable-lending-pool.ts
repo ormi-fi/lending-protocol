@@ -11,7 +11,6 @@ import { eNetwork } from '../../helpers/types';
 // Note: replace below with actual deployed addresses.
 const LENDING_POOL_ADDRESS_PROVIDER = {
   main: '',
-  kovan: '0x9BF95C16b5698b3EeC6cC0d33728fAB40c691bd1',
 };
 
 task(
