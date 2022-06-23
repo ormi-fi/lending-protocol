@@ -32,6 +32,8 @@ contract LendingPoolAddressesProvider is Ownable, ILendingPoolAddressesProvider 
   bytes32 private constant HEALTH_FACTOR_LIQUIDATION_THRESHOLD_MANAGER =
     'LIQUIDATION_THRESHOLD_MANAGER';
 
+  bytes32 private constant COVERAGE_POOL = 'COVERAGE_POOL';
+
   constructor(string memory marketId) public {
     _setMarketId(marketId);
   }
@@ -198,8 +200,9 @@ contract LendingPoolAddressesProvider is Ownable, ILendingPoolAddressesProvider 
   function _updateImpl(bytes32 id, address newAddress) internal {
     address payable proxyAddress = payable(_addresses[id]);
 
-    InitializableImmutableAdminUpgradeabilityProxy proxy =
-      InitializableImmutableAdminUpgradeabilityProxy(proxyAddress);
+    InitializableImmutableAdminUpgradeabilityProxy proxy = InitializableImmutableAdminUpgradeabilityProxy(
+        proxyAddress
+      );
     bytes memory params = abi.encodeWithSignature('initialize(address)', address(this));
 
     if (proxyAddress == address(0)) {
@@ -229,8 +232,30 @@ contract LendingPoolAddressesProvider is Ownable, ILendingPoolAddressesProvider 
    * @dev Updates the address of the HealthFactorLiquidationThresholdManager.
    * @param manager The new HealthFactorLiquidationThresholdManager.
    */
-  function setHealthFactorLiquidationThresholdManagerImpl(address manager) external override onlyOwner {
+  function setHealthFactorLiquidationThresholdManagerImpl(address manager)
+    external
+    override
+    onlyOwner
+  {
     _updateImpl(HEALTH_FACTOR_LIQUIDATION_THRESHOLD_MANAGER, manager);
     emit HealthFactorLiquidationThresholdManagerUpdated(manager);
+  }
+
+  /**
+   * @dev Returns the address of the CoveragePool proxy
+   * @return The CoveragePool proxy address
+   **/
+  function getCoveragePool() external view override returns (address) {
+    return getAddress(COVERAGE_POOL);
+  }
+
+  /**
+   * @dev Updates the implementation of the CoveragePool, or creates the proxy
+   * setting the new `pool` implementation on the first time calling it
+   * @param pool The new CoveragePool implementation
+   **/
+  function setCoveragePoolImpl(address pool) external override onlyOwner {
+    _updateImpl(COVERAGE_POOL, pool);
+    emit CoveragePoolUpdated(pool);
   }
 }

@@ -61,6 +61,7 @@ export enum eContractid {
   GenericLogic = 'GenericLogic',
   LendingPool = 'LendingPool',
   HealthFactorLiquidationThresholdManager = 'HealthFactorLiquidationThresholdManager',
+  CoveragePool = 'CoveragePool',
   PriceOracle = 'PriceOracle',
   Proxy = 'Proxy',
   MockAggregator = 'MockAggregator',
@@ -100,6 +101,7 @@ export enum eContractid {
   MockParaSwapAugustus = 'MockParaSwapAugustus',
   MockParaSwapAugustusRegistry = 'MockParaSwapAugustusRegistry',
   ParaSwapLiquiditySwapAdapter = 'ParaSwapLiquiditySwapAdapter',
+  CoveragePoolImpl = 'CoveragePoolImpl',
 }
 
 /*

@@ -26,13 +26,16 @@ task('aave:dev', 'Deploy development enviroment')
     console.log('3. Deploy lending pool');
     await localBRE.run('dev:deploy-lending-pool', { verify, pool: POOL_NAME });
 
-    console.log('4. Deploy oracles');
+    console.log('4. Deploy coverage pool');
+    await localBRE.run('dev:deploy-coverage-pool', { verify });
+
+    console.log('5. Deploy oracles');
     await localBRE.run('dev:deploy-oracles', { verify, pool: POOL_NAME });
 
-    console.log('5. Deploy WETH Gateway');
+    console.log('6. Deploy WETH Gateway');
     await localBRE.run('full-deploy-weth-gateway', { verify, pool: POOL_NAME });
 
-    console.log('6. Initialize lending pool');
+    console.log('7. Initialize lending pool');
     await localBRE.run('dev:initialize-lending-pool', { verify, pool: POOL_NAME });
 
     console.log('\nFinished migration');
