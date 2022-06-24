@@ -69,12 +69,10 @@ const buidlerConfig: any = {
       url: 'http://localhost:8555',
       chainId: COVERAGE_CHAINID,
     },
-<<<<<<< Updated upstream
     kovan: getCommonNetworkConfig(eEthereumNetwork.kovan, 42),
     ropsten: getCommonNetworkConfig(eEthereumNetwork.ropsten, 3),
-=======
     goerli: getCommonNetworkConfig(eEthereumNetwork.goerli, 5),
->>>>>>> Stashed changes
+
     main: getCommonNetworkConfig(eEthereumNetwork.main, 1),
     buidlerevm: {
       hardfork: 'istanbul',

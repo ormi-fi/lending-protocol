@@ -126,6 +126,7 @@ npm run test
 For deploying Aave Protocol V2, you can use the available scripts located at `package.json`. For a complete list, run `npm run` to see all the tasks.
 
 ### Kovan deployment
+### Goerli deployment
 
 ```
 # In one terminal
@@ -136,6 +137,7 @@ docker-compose exec contracts-env bash
 
 # A new Bash terminal is prompted, connected to the container
 npm run aave:kovan:full:migration
+npm run aave:goerli:dev:migration
 ```
 
 ### Mainnet fork deployment
@@ -146,6 +148,14 @@ You can deploy Aave Protocol v2 in a forked Mainnet chain using Hardhat built-in
 docker-compose run contracts-env npm run aave:fork:main
 ```
 
+npm run aave:kovan:full:migration:add-registry:verify
+npm run aave:goerli:full:migration:add-registry:verify
+
+npm run aave:kovan:full:migration:add-registry
+npm run aave:goerli:full:migration:add-registry
+
+npm run aave:kovan:full:migration
+npm run aave:goerli:full:migration
 ### Deploy Aave into a Mainnet Fork via console
 
 You can deploy Aave into the Hardhat console in fork mode, to interact with the protocol inside the fork or for testing purposes.
