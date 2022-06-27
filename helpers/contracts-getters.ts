@@ -225,6 +225,7 @@ export const getPairsTokenAggregator = (
       (value) => value === tokenSymbol
     );
     const [, aggregatorAddress] = (
+      //issue on line below
       Object.entries(aggregatorsAddresses) as [string, tEthereumAddress][]
     )[aggregatorAddressIndex];
     return [tokenAddress, aggregatorAddress];

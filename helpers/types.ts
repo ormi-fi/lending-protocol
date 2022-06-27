@@ -6,6 +6,9 @@ export interface SymbolMap<T> {
 
 export type eNetwork = eEthereumNetwork | ePolygonNetwork | eXDaiNetwork | eAvalancheNetwork;
 
+
+
+
 export enum eEthereumNetwork {
   buidlerevm = 'buidlerevm',
   main = 'main',
@@ -13,6 +16,8 @@ export enum eEthereumNetwork {
   hardhat = 'hardhat',
   tenderly = 'tenderly',
   goerli = 'goerli',
+  kovan = 'kovan',
+  ropsten = 'ropsten',
 }
 
 export enum ePolygonNetwork {
@@ -37,6 +42,8 @@ export enum EthereumNetworkNames {
   avalanche = 'avalanche',
   fuji = 'fuji',
   goerli = 'goerli',
+  kovan = 'kovan',
+  ropsten = 'ropsten',
 }
 
 export enum AavePools {
@@ -427,6 +434,8 @@ export interface iEthereumParamsPerNetwork<T> {
   [eEthereumNetwork.hardhat]: T;
   [eEthereumNetwork.tenderly]: T;
   [eEthereumNetwork.goerli]: T;
+  [eEthereumNetwork.kovan]: T;
+  [eEthereumNetwork.ropsten]: T;
 }
 
 export interface iPolygonParamsPerNetwork<T> {
