@@ -151,7 +151,7 @@ library UserConfiguration {
    **/
   function getHealthFactorLiquidationThreshold(DataTypes.UserConfigurationMap memory self)
     internal
-    pure
+    view
     returns (uint256)
   {
     return self.healthFactorLiquidationThreshold;
