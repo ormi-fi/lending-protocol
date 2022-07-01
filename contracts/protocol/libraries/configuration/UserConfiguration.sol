@@ -13,6 +13,9 @@ library UserConfiguration {
   uint256 internal constant BORROWING_MASK =
     0x5555555555555555555555555555555555555555555555555555555555555555;
 
+  uint256 internal constant _maxReserves = 256;
+  uint256 internal constant _indexCount = _maxReserves / 128 + ((_maxReserves % 128 > 0) ? 1 : 0);
+
   /**
    * @dev Sets if the user is borrowing the reserve identified by reserveIndex
    * @param self The configuration object
@@ -24,9 +27,11 @@ library UserConfiguration {
     uint256 reserveIndex,
     bool borrowing
   ) internal {
-    require(reserveIndex < 128, Errors.UL_INVALID_INDEX);
-    self.data =
-      (self.data & ~(1 << (reserveIndex * 2))) |
+    require(reserveIndex < _maxReserves, Errors.UL_INVALID_INDEX);
+    uint256 index = reserveIndex / 128;
+    reserveIndex = reserveIndex % 128;
+    self.data[index] =
+      (self.data[index] & ~(1 << (reserveIndex * 2))) |
       (uint256(borrowing ? 1 : 0) << (reserveIndex * 2));
   }
 
@@ -41,9 +46,11 @@ library UserConfiguration {
     uint256 reserveIndex,
     bool usingAsCollateral
   ) internal {
-    require(reserveIndex < 128, Errors.UL_INVALID_INDEX);
-    self.data =
-      (self.data & ~(1 << (reserveIndex * 2 + 1))) |
+    require(reserveIndex < _maxReserves, Errors.UL_INVALID_INDEX);
+    uint256 index = reserveIndex / 128;
+    reserveIndex = reserveIndex % 128;
+    self.data[index] =
+      (self.data[index] & ~(1 << (reserveIndex * 2 + 1))) |
       (uint256(usingAsCollateral ? 1 : 0) << (reserveIndex * 2 + 1));
   }
 
@@ -57,8 +64,10 @@ library UserConfiguration {
     DataTypes.UserConfigurationMap memory self,
     uint256 reserveIndex
   ) internal pure returns (bool) {
-    require(reserveIndex < 128, Errors.UL_INVALID_INDEX);
-    return (self.data >> (reserveIndex * 2)) & 3 != 0;
+    require(reserveIndex < _maxReserves, Errors.UL_INVALID_INDEX);
+    uint256 index = reserveIndex / 128;
+    reserveIndex = reserveIndex % 128;
+    return (self.data[index] >> (reserveIndex * 2)) & 3 != 0;
   }
 
   /**
@@ -72,8 +81,10 @@ library UserConfiguration {
     pure
     returns (bool)
   {
-    require(reserveIndex < 128, Errors.UL_INVALID_INDEX);
-    return (self.data >> (reserveIndex * 2)) & 1 != 0;
+    require(reserveIndex < _maxReserves, Errors.UL_INVALID_INDEX);
+    uint256 index = reserveIndex / 128;
+    reserveIndex = reserveIndex % 128;
+    return (self.data[index] >> (reserveIndex * 2)) & 1 != 0;
   }
 
   /**
@@ -87,8 +98,10 @@ library UserConfiguration {
     pure
     returns (bool)
   {
-    require(reserveIndex < 128, Errors.UL_INVALID_INDEX);
-    return (self.data >> (reserveIndex * 2 + 1)) & 1 != 0;
+    require(reserveIndex < _maxReserves, Errors.UL_INVALID_INDEX);
+    uint256 index = reserveIndex / 128;
+    reserveIndex = reserveIndex % 128;
+    return (self.data[index] >> (reserveIndex * 2 + 1)) & 1 != 0;
   }
 
   /**
@@ -97,7 +110,12 @@ library UserConfiguration {
    * @return True if the user has been borrowing any reserve, false otherwise
    **/
   function isBorrowingAny(DataTypes.UserConfigurationMap memory self) internal pure returns (bool) {
-    return self.data & BORROWING_MASK != 0;
+    for (uint8 i = 0; i < _indexCount; i++) {
+      if (self.data[i] & BORROWING_MASK != 0) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -106,6 +124,36 @@ library UserConfiguration {
    * @return True if the user has been borrowing any reserve, false otherwise
    **/
   function isEmpty(DataTypes.UserConfigurationMap memory self) internal pure returns (bool) {
-    return self.data == 0;
+    for (uint8 i = 0; i < _indexCount; i++) {
+      if (self.data[i] != 0 || self.healthFactorLiquidationThreshold != 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * @dev Update health factor liquidation threshold.
+   * @param self The configuration object
+   * @param healthFactorLiquidationThreshold The threshold that results in liquidation.
+   **/
+  function setHealthFactorLiquidationThreshold(
+    DataTypes.UserConfigurationMap storage self,
+    uint256 healthFactorLiquidationThreshold
+  ) internal {
+    self.healthFactorLiquidationThreshold = healthFactorLiquidationThreshold;
+  }
+
+  /**
+   * @dev Return the min allowed health factor user has, after which liquidation may occur.
+   * @param self The configuration object
+   * @return The health factor liquidation threshold
+   **/
+  function getHealthFactorLiquidationThreshold(DataTypes.UserConfigurationMap memory self)
+    internal
+    view
+    returns (uint256)
+  {
+    return self.healthFactorLiquidationThreshold;
   }
 }

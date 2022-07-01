@@ -6,14 +6,18 @@ export interface SymbolMap<T> {
 
 export type eNetwork = eEthereumNetwork | ePolygonNetwork | eXDaiNetwork | eAvalancheNetwork;
 
+
+
+
 export enum eEthereumNetwork {
   buidlerevm = 'buidlerevm',
-  kovan = 'kovan',
-  ropsten = 'ropsten',
   main = 'main',
   coverage = 'coverage',
   hardhat = 'hardhat',
   tenderly = 'tenderly',
+  goerli = 'goerli',
+  kovan = 'kovan',
+  ropsten = 'ropsten',
 }
 
 export enum ePolygonNetwork {
@@ -31,8 +35,6 @@ export enum eAvalancheNetwork {
 }
 
 export enum EthereumNetworkNames {
-  kovan = 'kovan',
-  ropsten = 'ropsten',
   main = 'main',
   matic = 'matic',
   mumbai = 'mumbai',
@@ -40,6 +42,8 @@ export enum EthereumNetworkNames {
   avalanche = 'avalanche',
   fuji = 'fuji',
   goerli = 'goerli',
+  kovan = 'kovan',
+  ropsten = 'ropsten',
 }
 
 export enum AavePools {
@@ -61,6 +65,7 @@ export enum eContractid {
   ReserveLogic = 'ReserveLogic',
   GenericLogic = 'GenericLogic',
   LendingPool = 'LendingPool',
+  HealthFactorLiquidationThresholdManager = 'HealthFactorLiquidationThresholdManager',
   PriceOracle = 'PriceOracle',
   Proxy = 'Proxy',
   MockAggregator = 'MockAggregator',
@@ -85,13 +90,12 @@ export enum eContractid {
   StableAndVariableTokensHelper = 'StableAndVariableTokensHelper',
   ATokensAndRatesHelper = 'ATokensAndRatesHelper',
   UiPoolDataProvider = 'UiPoolDataProvider',
-  UiPoolDataProviderV2 = 'UiPoolDataProviderV2',
-  UiPoolDataProviderV2V3 = 'UiPoolDataProviderV2V3',
   WETHGateway = 'WETHGateway',
   WETH = 'WETH',
   WETHMocked = 'WETHMocked',
   SelfdestructTransferMock = 'SelfdestructTransferMock',
   LendingPoolImpl = 'LendingPoolImpl',
+  HealthFactorLiquidationThresholdManagerImpl = 'HealthFactorLiquidationThresholdManagerImpl',
   LendingPoolConfiguratorImpl = 'LendingPoolConfiguratorImpl',
   LendingPoolCollateralManagerImpl = 'LendingPoolCollateralManagerImpl',
   MockUniswapV2Router02 = 'MockUniswapV2Router02',
@@ -101,8 +105,6 @@ export enum eContractid {
   MockParaSwapAugustus = 'MockParaSwapAugustus',
   MockParaSwapAugustusRegistry = 'MockParaSwapAugustusRegistry',
   ParaSwapLiquiditySwapAdapter = 'ParaSwapLiquiditySwapAdapter',
-  UiIncentiveDataProviderV2V3 = 'UiIncentiveDataProviderV2V3',
-  UiIncentiveDataProviderV2 = 'UiIncentiveDataProviderV2',
 }
 
 /*
@@ -422,18 +424,18 @@ export type iParamsPerNetwork<T> =
 
 export interface iParamsPerNetworkAll<T>
   extends iEthereumParamsPerNetwork<T>,
-  iPolygonParamsPerNetwork<T>,
-  iXDaiParamsPerNetwork<T> { }
+    iPolygonParamsPerNetwork<T>,
+    iXDaiParamsPerNetwork<T> {}
 
 export interface iEthereumParamsPerNetwork<T> {
   [eEthereumNetwork.coverage]: T;
   [eEthereumNetwork.buidlerevm]: T;
-  [eEthereumNetwork.kovan]: T;
-  [eEthereumNetwork.ropsten]: T;
   [eEthereumNetwork.main]: T;
   [eEthereumNetwork.hardhat]: T;
   [eEthereumNetwork.tenderly]: T;
   [eEthereumNetwork.goerli]: T;
+  [eEthereumNetwork.kovan]: T;
+  [eEthereumNetwork.ropsten]: T;
 }
 
 export interface iPolygonParamsPerNetwork<T> {

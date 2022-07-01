@@ -4,13 +4,13 @@ import {
   ATokensAndRatesHelperFactory,
   AaveOracleFactory,
   DefaultReserveInterestRateStrategyFactory,
-  GenericLogicFactory,
   InitializableAdminUpgradeabilityProxyFactory,
   LendingPoolAddressesProviderFactory,
   LendingPoolAddressesProviderRegistryFactory,
   LendingPoolCollateralManagerFactory,
   LendingPoolConfiguratorFactory,
   LendingPoolFactory,
+  HealthFactorLiquidationThresholdManagerFactory,
   LendingRateOracleFactory,
   MintableERC20Factory,
   MockATokenFactory,
@@ -68,6 +68,15 @@ export const getLendingPool = async (address?: tEthereumAddress) =>
       ).address,
     await getFirstSigner()
   );
+
+export const getHealthFactorLiquidationThresholdManager = async (address?: tEthereumAddress) =>
+  await HealthFactorLiquidationThresholdManagerFactory.connect(
+    address ||
+      (
+        await getDb().get(`${eContractid.HealthFactorLiquidationThresholdManager}.${DRE.network.name}`).value()
+      ).address,
+    await getFirstSigner()
+  );  
 
 export const getPriceOracle = async (address?: tEthereumAddress) =>
   await PriceOracleFactory.connect(
@@ -216,6 +225,7 @@ export const getPairsTokenAggregator = (
       (value) => value === tokenSymbol
     );
     const [, aggregatorAddress] = (
+      //issue on line below
       Object.entries(aggregatorsAddresses) as [string, tEthereumAddress][]
     )[aggregatorAddressIndex];
     return [tokenAddress, aggregatorAddress];
@@ -245,15 +255,6 @@ export const getReserveLogic = async (address?: tEthereumAddress) =>
     address ||
       (
         await getDb().get(`${eContractid.ReserveLogic}.${DRE.network.name}`).value()
-      ).address,
-    await getFirstSigner()
-  );
-
-export const getGenericLogic = async (address?: tEthereumAddress) =>
-  await GenericLogicFactory.connect(
-    address ||
-      (
-        await getDb().get(`${eContractid.GenericLogic}.${DRE.network.name}`).value()
       ).address,
     await getFirstSigner()
   );

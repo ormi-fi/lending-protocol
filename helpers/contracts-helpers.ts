@@ -145,7 +145,7 @@ export const linkBytecode = (artifact: BuidlerArtifact | Artifact, libraries: an
 };
 
 export const getParamPerNetwork = <T>(param: iParamsPerNetwork<T>, network: eNetwork) => {
-  const { main, ropsten, kovan, coverage, buidlerevm, tenderly, goerli } =
+  const { main, coverage, buidlerevm, tenderly, goerli, ropsten, kovan } =
     param as iEthereumParamsPerNetwork<T>;
   const { matic, mumbai } = param as iPolygonParamsPerNetwork<T>;
   const { xdai } = param as iXDaiParamsPerNetwork<T>;
@@ -161,16 +161,16 @@ export const getParamPerNetwork = <T>(param: iParamsPerNetwork<T>, network: eNet
       return buidlerevm;
     case eEthereumNetwork.hardhat:
       return buidlerevm;
-    case eEthereumNetwork.kovan:
-      return kovan;
-    case eEthereumNetwork.ropsten:
-      return ropsten;
     case eEthereumNetwork.main:
       return main;
     case eEthereumNetwork.tenderly:
       return tenderly;
     case eEthereumNetwork.goerli:
       return goerli;
+    case eEthereumNetwork.ropsten:
+      return ropsten;
+    case eEthereumNetwork.kovan:
+      return kovan;
     case ePolygonNetwork.matic:
       return matic;
     case ePolygonNetwork.mumbai:
@@ -194,10 +194,7 @@ export const getOptionalParamAddressPerNetwork = (
   return getParamPerNetwork(param, network);
 };
 
-export const getParamPerPool = <T>(
-  { proto, amm, matic, avalanche }: iParamsPerPool<T>,
-  pool: AavePools
-) => {
+export const getParamPerPool = <T>({ proto, amm, matic, avalanche }: iParamsPerPool<T>, pool: AavePools) => {
   switch (pool) {
     case AavePools.proto:
       return proto;
@@ -383,10 +380,14 @@ export const verifyContract = async (
   instance: Contract,
   args: (string | string[])[]
 ) => {
-  if (usingTenderly()) {
-    await verifyAtTenderly(id, instance);
+  if (usingPolygon()) {
+    await verifyAtPolygon(id, instance, args);
+  } else {
+    if (usingTenderly()) {
+      await verifyAtTenderly(id, instance);
+    }
+    await verifyEtherscanContract(instance.address, args);
   }
-  await verifyEtherscanContract(instance.address, args);
   return instance;
 };
 

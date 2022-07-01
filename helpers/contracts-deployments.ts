@@ -23,6 +23,7 @@ import {
   DefaultReserveInterestRateStrategyFactory,
   DelegationAwareATokenFactory,
   InitializableAdminUpgradeabilityProxyFactory,
+  HealthFactorLiquidationThresholdManagerFactory,
   LendingPoolAddressesProviderFactory,
   LendingPoolAddressesProviderRegistryFactory,
   LendingPoolCollateralManagerFactory,
@@ -182,7 +183,6 @@ export const deployReserveLogicLibrary = async (verify?: boolean) =>
 
 export const deployGenericLogic = async (reserveLogic: Contract, verify?: boolean) => {
   const genericLogicArtifact = await readArtifact(eContractid.GenericLogic);
-
   const linkedGenericLogicByteCode = linkBytecode(genericLogicArtifact, {
     [eContractid.ReserveLogic]: reserveLogic.address,
   });
@@ -206,7 +206,6 @@ export const deployValidationLogic = async (
   const validationLogicArtifact = await readArtifact(eContractid.ValidationLogic);
 
   const linkedValidationLogicByteCode = linkBytecode(validationLogicArtifact, {
-    [eContractid.ReserveLogic]: reserveLogic.address,
     [eContractid.GenericLogic]: genericLogic.address,
   });
 
@@ -251,6 +250,24 @@ export const deployLendingPool = async (verify?: boolean) => {
   const lendingPoolImpl = await new LendingPoolFactory(libraries, await getFirstSigner()).deploy();
   await insertContractAddressInDb(eContractid.LendingPoolImpl, lendingPoolImpl.address);
   return withSaveAndVerify(lendingPoolImpl, eContractid.LendingPool, [], verify);
+};
+
+export const deployHealthFactorLiquidationThresholdManager = async (
+  verify?: boolean
+) => {
+  var addr = await getFirstSigner();
+  const healthFactorLiquidationThresholdManagerImpl =
+    await new HealthFactorLiquidationThresholdManagerFactory(await getFirstSigner()).deploy();
+  await insertContractAddressInDb(
+    eContractid.HealthFactorLiquidationThresholdManagerImpl,
+    healthFactorLiquidationThresholdManagerImpl.address
+  );
+  return await withSaveAndVerify(
+    healthFactorLiquidationThresholdManagerImpl,
+    eContractid.HealthFactorLiquidationThresholdManager,
+    [],
+    verify
+  );
 };
 
 export const deployPriceOracle = async (verify?: boolean) =>

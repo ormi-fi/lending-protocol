@@ -72,6 +72,9 @@ const getCommonNetworkConfig = (networkName: eNetwork, networkId: number) => ({
 let forkMode;
 
 const buidlerConfig: HardhatUserConfig = {
+  gasReporter: {
+    enabled: false
+  },
   solidity: {
     version: '0.6.12',
     settings: {
@@ -99,21 +102,22 @@ const buidlerConfig: HardhatUserConfig = {
       url: 'http://localhost:8555',
       chainId: COVERAGE_CHAINID,
     },
-    kovan: getCommonNetworkConfig(eEthereumNetwork.kovan, 42),
-    ropsten: getCommonNetworkConfig(eEthereumNetwork.ropsten, 3),
     main: getCommonNetworkConfig(eEthereumNetwork.main, 1),
     tenderly: getCommonNetworkConfig(eEthereumNetwork.tenderly, 3030),
     goerli: getCommonNetworkConfig(eEthereumNetwork.goerli, 5),
+    kovan: getCommonNetworkConfig(eEthereumNetwork.kovan, 42),
+    ropsten: getCommonNetworkConfig(eEthereumNetwork.ropsten, 3),
     matic: getCommonNetworkConfig(ePolygonNetwork.matic, 137),
     mumbai: getCommonNetworkConfig(ePolygonNetwork.mumbai, 80001),
     xdai: getCommonNetworkConfig(eXDaiNetwork.xdai, 100),
     avalanche: getCommonNetworkConfig(eAvalancheNetwork.avalanche, 43114),
     fuji: getCommonNetworkConfig(eAvalancheNetwork.fuji, 43113),
     hardhat: {
-      hardfork: 'berlin',
+      hardfork: 'london',
       blockGasLimit: DEFAULT_BLOCK_GAS_LIMIT,
       gas: DEFAULT_BLOCK_GAS_LIMIT,
       gasPrice: 8000000000,
+      loggingEnabled: true,
       allowUnlimitedContractSize: UNLIMITED_BYTECODE_SIZE,
       chainId: BUIDLEREVM_CHAINID,
       throwOnTransactionFailures: true,
